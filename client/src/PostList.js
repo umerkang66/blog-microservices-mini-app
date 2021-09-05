@@ -18,6 +18,7 @@ const PostList = ({ posts, setPosts }) => {
 
       await fetchPosts();
 
+      // This does not reFetching again and again because we have set the comment status to an empty string but the useEffect will only be reFetch if the comment status is equal to pending
       if (commentStatus === 'pending') {
         await fetchPosts();
         setCommentStatus('');
