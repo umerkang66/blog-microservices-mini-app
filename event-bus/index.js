@@ -12,6 +12,7 @@ app.post('/events', (req, res) => {
   axios.post(urlGenerator(4000), event);
   axios.post(urlGenerator(4001), event);
   axios.post(urlGenerator(4002), event);
+  axios.post(urlGenerator(4003), event);
 
   res.send({ status: 'OK' });
 });

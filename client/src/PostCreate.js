@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const PostCreate = () => {
+const PostCreate = ({ posts, setPosts }) => {
   const [title, setTitle] = useState('');
 
   const inputOnChange = event => {
@@ -11,12 +11,14 @@ const PostCreate = () => {
 
   const inputOnSubmit = async event => {
     event.preventDefault();
+    if (!title) return;
 
     const postUrl = 'http://localhost:4000/posts';
     const createdPost = await axios.post(postUrl, { title });
     setTitle('');
 
-    console.log(createdPost.data.data);
+    const newPost = createdPost.data.data;
+    setPosts({ ...posts, [newPost.id]: { ...newPost, comments: [] } });
   };
 
   return (

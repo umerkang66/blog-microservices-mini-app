@@ -3,19 +3,29 @@ import React, { useState, useEffect } from 'react';
 import CommentCreate from './CommentCreate';
 import CommentList from './CommentList';
 
-const PostList = () => {
-  const [posts, setPosts] = useState({});
-
-  const fetchPosts = async () => {
-    const postsUrl = 'http://localhost:4002/posts';
-    const res = await axios.get(postsUrl);
-
-    setPosts(res.data.data);
-  };
+const PostList = ({ posts, setPosts }) => {
+  const [commentStatus, setCommentStatus] = useState('');
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    const reInvokingFunc = async () => {
+      const fetchPosts = async () => {
+        const postsUrl = 'http://localhost:4002/posts';
+        const res = await axios.get(postsUrl);
+
+        const posts = res.data.data;
+        setPosts(posts);
+      };
+
+      await fetchPosts();
+
+      if (commentStatus === 'pending') {
+        await fetchPosts();
+        setCommentStatus('');
+      }
+    };
+
+    reInvokingFunc();
+  }, [setPosts, commentStatus]);
 
   const renderedPosts = Object.values(posts).map(post => {
     return (
@@ -27,7 +37,12 @@ const PostList = () => {
         <div className="card-body">
           <h3>{post.title}</h3>
           <CommentList comments={post.comments} />
-          <CommentCreate postId={post.id} />
+          <CommentCreate
+            setCommentStatus={setCommentStatus}
+            posts={posts}
+            setPosts={setPosts}
+            postId={post.id}
+          />
         </div>
       </div>
     );
