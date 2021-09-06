@@ -4,10 +4,10 @@ import CommentCreate from './CommentCreate';
 import CommentList from './CommentList';
 
 const PostList = ({ posts, setPosts }) => {
-  const [commentStatus, setCommentStatus] = useState('');
+  const [commentStatus, setCommentStatus] = useState('firstTime');
 
   useEffect(() => {
-    const reInvokingFunc = async () => {
+    const reInvokingAndFetchingFunc = async () => {
       const fetchPosts = async () => {
         const postsUrl = 'http://localhost:4002/posts';
         const res = await axios.get(postsUrl);
@@ -16,7 +16,9 @@ const PostList = ({ posts, setPosts }) => {
         setPosts(posts);
       };
 
-      await fetchPosts();
+      if (commentStatus === 'firstTime') {
+        await fetchPosts();
+      }
 
       // This does not reFetching again and again because we have set the comment status to an empty string but the useEffect will only be reFetch if the comment status is equal to pending
       if (commentStatus === 'pending') {
@@ -25,7 +27,7 @@ const PostList = ({ posts, setPosts }) => {
       }
     };
 
-    reInvokingFunc();
+    reInvokingAndFetchingFunc();
   }, [setPosts, commentStatus]);
 
   const renderedPosts = Object.values(posts).map(post => {
