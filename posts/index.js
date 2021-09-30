@@ -10,30 +10,37 @@ app.use(express.json());
 const posts = {};
 
 app.get('/posts', (req, res) => {
-  res.send(posts);
+    res.send(posts);
 });
 
 app.post('/posts', async (req, res) => {
-  const id = randomBytes(4).toString('hex');
-  const { title } = req.body;
+    const id = randomBytes(4).toString('hex');
+    const { title } = req.body;
 
-  posts[id] = { id, title };
+    posts[id] = { id, title };
 
-  // Emitting the events to event-bus
-  const eventUrl = 'http://localhost:4005/events';
-  await axios.post(eventUrl, { type: 'PostCreated', data: { id, title } });
+    // Emitting the events to event-bus
+    const eventUrl = 'http://event-bus-srv:4005/events';
 
-  res.status(201).json({
-    status: 'success',
-    data: posts[id],
-  });
+    await axios.post(eventUrl, {
+        type: 'PostCreated',
+        data: { id, title },
+    });
+
+    res.status(201).json({
+        status: 'success',
+        data: posts[id],
+    });
 });
 
 app.post('/events', (req, res) => {
-  console.log('Recieve event', req.body.type);
-  res.send({});
+    console.log('Recieve event', req.body.type);
+
+    res.send({});
 });
 
 app.listen(4000, () => {
-  console.log('Listening on port 4000');
+    console.log('v20');
+
+    console.log('Listening on port 4000');
 });
