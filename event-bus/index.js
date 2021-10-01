@@ -15,12 +15,9 @@ app.post('/events', (req, res) => {
     events.push(event);
 
     axios.post(urlGenerator('post-clusterip-srv', 4000), event);
-
-    /*
-    axios.post(urlGenerator('localhost', 4001), event);
-    axios.post(urlGenerator('localhost', 4002), event);
-    axios.post(urlGenerator('localhost', 4003), event);
-    */
+    axios.post(urlGenerator('comments-srv', 4001), event);
+    axios.post(urlGenerator('query-srv', 4002), event);
+    axios.post(urlGenerator('moderation-srv', 4003), event);
 
     res.send({
         status: 'OK',
