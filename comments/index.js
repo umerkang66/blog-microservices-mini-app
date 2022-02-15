@@ -10,70 +10,70 @@ app.use(express.json());
 const commentsByPostId = {};
 
 app.get('/posts/comments', (req, res) => {
-    res.status(201).json({
-        status: 'success',
-        data: commentsByPostId,
-    });
+  res.status(201).json({
+    status: 'success',
+    data: commentsByPostId,
+  });
 });
 
 app.get('/posts/:id/comments', (req, res) => {
-    const postId = req.params.id;
-    const comments = commentsByPostId[postId] || [];
+  const postId = req.params.id;
+  const comments = commentsByPostId[postId] || [];
 
-    res.status(200).json({
-        status: 'success',
-        data: comments,
-    });
+  res.status(200).json({
+    status: 'success',
+    data: comments,
+  });
 });
 
 app.post('/posts/:id/comments', async (req, res) => {
-    const postId = req.params.id;
-    const commentId = randomBytes(4).toString('hex');
-    const { content } = req.body;
+  const postId = req.params.id;
+  const commentId = randomBytes(4).toString('hex');
+  const { content } = req.body;
 
-    const comments = commentsByPostId[postId] || [];
-    comments.push({ id: commentId, content, status: 'pending' });
-    commentsByPostId[postId] = comments;
+  const comments = commentsByPostId[postId] || [];
+  comments.push({ id: commentId, content, status: 'pending' });
+  commentsByPostId[postId] = comments;
 
-    // Emitting events to event-bus
-    const eventUrl = 'http://event-bus-srv:4005/events';
-    const eventData = { id: commentId, postId, content, status: 'pending' };
+  // Emitting events to event-bus
+  const eventUrl = 'http://event-bus-srv:4005/events';
+  const eventData = { id: commentId, postId, content, status: 'pending' };
 
-    await axios.post(eventUrl, {
-        type: 'CommentCreated',
-        data: eventData,
-    });
+  await axios.post(eventUrl, {
+    type: 'CommentCreated',
+    data: eventData,
+  });
 
-    res.status(201).json({
-        status: 'success',
-        data: comments,
-    });
+  res.status(201).json({
+    status: 'success',
+    data: comments,
+  });
 });
 
 app.post('/events', async (req, res) => {
-    console.log('Event Recieved', req.body.type);
+  console.log('Event Recieved', req.body.type);
 
-    const { type, data } = req.body;
+  const { type, data } = req.body;
 
-    if (type === 'CommentModerated') {
-        const { postId, id, status, content } = data;
-        const comments = commentsByPostId[postId];
+  if (type === 'CommentModerated') {
+    const { postId, id, status, content } = data;
+    const comments = commentsByPostId[postId];
 
-        const comment = comments.find(comment => comment.id === id);
-        comment.status = status;
+    const comment = comments.find(comment => comment.id === id);
+    comment.status = status;
 
-        const eventUrl = 'http://event-bus-srv:4005/events';
-        const eventData = { id, postId, content, status };
+    const eventUrl = 'http://event-bus-srv:4005/events';
+    const eventData = { id, postId, content, status };
 
-        await axios.post(eventUrl, {
-            type: 'CommentUpdated',
-            data: eventData,
-        });
-    }
+    await axios.post(eventUrl, {
+      type: 'CommentUpdated',
+      data: eventData,
+    });
+  }
 
-    res.send({});
+  res.send({});
 });
 
 app.listen(4001, () => {
-    console.log('Listening on post 4001');
+  console.log('Listening on post 4001');
 });

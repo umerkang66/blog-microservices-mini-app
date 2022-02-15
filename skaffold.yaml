@@ -1,58 +1,58 @@
 apiVersion: skaffold/v2alpha3
 kind: Config
 deploy:
-    kubectl:
-        manifests:
-            - ./infra/k8s/*
+  kubectl:
+    manifests:
+      - ./infra/k8s/*
 build:
-    local:
-        push: false
-    artifacts:
-        - image: ugulzar4512/client
-          context: client
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: 'src/**/*.js'
-                    dest: .
-        - image: ugulzar4512/comments
-          context: comments
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: '*.js'
-                    dest: .
-        - image: ugulzar4512/event-bus
-          context: event-bus
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: '*.js'
-                    dest: .
-        - image: ugulzar4512/moderation
-          context: moderation
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: '*.js'
-                    dest: .
-        - image: ugulzar4512/posts
-          context: posts
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: '*.js'
-                    dest: .
-        - image: ugulzar4512/query
-          context: query
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: '*.js'
-                    dest: .
+  local:
+    push: false
+  artifacts:
+    - image: ugulzar4512/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js'
+            dest: .
+    - image: ugulzar4512/comments
+      context: comments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: ugulzar4512/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: ugulzar4512/moderation
+      context: moderation
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: ugulzar4512/posts
+      context: posts
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: ugulzar4512/query
+      context: query
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
